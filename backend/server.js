@@ -14,7 +14,7 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 app.post('/api/generate-function', async (req, res) => {
-    const nameLanguage = req.query.nameLanguage ? req.query.nameLanguage : "JavaScript";
+    const nameLanguage = req.body.nameLanguage ? req.body.nameLanguage : "JavaScript";
     const prompt = `Write a ${nameLanguage} function with a minimum of 200 characters, regardless of how it operates. Please only include the function in your response without any additional text.`;
     
     try {

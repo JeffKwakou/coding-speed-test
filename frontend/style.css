@@ -1,0 +1,61 @@
+body {
+    font-family: "Poppins", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 400;
+    background-color: rgb(236, 236, 236);
+}
+
+.char__active {
+    font-weight: 600;
+    color: white;
+    background-color: green;
+}
+
+.char {
+    padding: 0 1px;
+}
+
+.char__good {
+    color: green !important;
+    background-color: transparent !important;
+}
+
+.char__bad {
+    background-color: red;
+}
+
+.char__tab {
+    margin-right: 20px;
+    width: 5px;
+}
+
+#speedtest-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 30px;
+    
+    overflow: hidden;
+}
+
+#speedtest-content {
+    width: 75%;
+    background-color: white;
+    padding: 20px;
+    border-radius: 20px;
+    display: grid;
+    grid-template-columns: auto 15%;
+}
+
+#speedtest {
+    pointer-events: none;
+    cursor: not-allowed;
+    user-select: none;
+}
+
+.speedtest-input {
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+}

@@ -5,9 +5,62 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Coding speed test</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,200;1,300;1,500;1,700&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div>
+        <h2>Choose your favourite language</h2>
+        <select name="language" id="language-select">
+            <option value="Javascript">Javascript</option>
+            <option value="Python">Python</option>
+            <option value="Go">Go</option>
+            <option value="Java">Java</option>
+            <option value="Kotlin">Kotlin</option>
+            <option value="PHP">PHP</option>
+            <option value="C#">C#</option>
+            <option value="Swift">Swift</option>
+            <option value="R">R</option>
+            <option value="Ruby">Ruby</option>
+            <option value="TypeScript">TypeScript</option>
+            <option value="C++">C++</option>
+            <option value="C">C</option>
+        </select>
+    </div>
+
+    <div id="speedtest-container">
+        <div id="speedtest-content">
+            <div id="speedtest">
+                <div id="speedtest-text"></div>
+            
+                <input type="text" class="speedtest-input">
+            </div>
+            <div>
+                <div>
+                    <h2>Speed</h2>
+                    <div>
+                        <span id="wpm">0</span> WPM
+                    </div>
+                </div>
+                <div>
+                    <h2>Accuracy</h2>
+                    <div>
+                        <span id="accuracy">100</span> %
+                    </div>
+                </div>
+                <div>
+                    <button type="button" onclick="start()">Restart</button>
+                </div>
+            </div>
+        </div>
+    </div>
     
-    <script src="script.js"></script>
+    <script src="./js/script.js"></script>
 </body>
 </html>
