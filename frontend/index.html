@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div>
+    <div id="language-select-container">
         <h2>Choose your favourite language</h2>
         <select name="language" id="language-select">
             <option value="Javascript">Javascript</option>
@@ -41,22 +41,46 @@
             
                 <input type="text" class="speedtest-input">
             </div>
-            <div>
+            <div id="speedtest-score">
                 <div>
-                    <h2>Speed</h2>
-                    <div>
-                        <span id="wpm">0</span> WPM
+                    <div id="wpm-container">
+                        <h2>Speed</h2>
+                        <div>
+                            <span class="wpm">0</span> WPM
+                        </div>
+                    </div>
+                    <div class="accuracy-container">
+                        <h2>Accuracy</h2>
+                        <div>
+                            <span class="accuracy">100</span> %
+                        </div>
                     </div>
                 </div>
-                <div>
-                    <h2>Accuracy</h2>
-                    <div>
-                        <span id="accuracy">100</span> %
-                    </div>
-                </div>
-                <div>
+                <div class="restart-speedtest">
                     <button type="button" onclick="start()">Restart</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="scoreboard" class="modal">
+        <div class="modal-content">
+            <div>
+                <div id="wpm-container">
+                    <h2>Speed</h2>
+                    <div>
+                        <span class="wpm">0</span> WPM
+                    </div>
+                </div>
+                <div class="accuracy-container">
+                    <h2>Accuracy</h2>
+                    <div>
+                        <span class="accuracy">100</span> %
+                    </div>
+                </div>
+            </div>
+            <div class="restart-speedtest">
+                <button type="button" onclick="start()">Restart</button>
             </div>
         </div>
     </div>

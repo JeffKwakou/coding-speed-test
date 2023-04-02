@@ -2,6 +2,9 @@
 const input = document.querySelector('.speedtest-input');
 const container = document.querySelector('#speedtest-text');
 const test = document.querySelector('#speedtest-container');
+let modal = document.getElementById("scoreboard");
+const span = document.getElementsByClassName("close")[0];
+
 let isStarting = false;
 let wpmInterval = null;
 let time = 0;
@@ -20,61 +23,52 @@ inputFocus();
 // Handle the language selection
 const selectLanguage = document.querySelector('#language-select');
 selectLanguage.addEventListener('change', function(e) {
-    console.log("select")
     language = this.value;
     localStorage.setItem('languageSelected', this.value);
+    start();
 });
 
 selectLanguage.value = localStorage.getItem('languageSelected') ? localStorage.getItem('languageSelected') : 'Javascript';
-let query = `function makeSmoothie(ingredients) {
-    let smoothie = "";
-    for(let i = 0; i < ingredients.length; i++) {
-      if(i == ingredients.length-1) smoothie += ingredients[i];
-      else smoothie += ingredients[i] + "-";
-    }
-    return smoothie;
-}`
 
 function start() {
-    
+    const request = generateFunctionWithOpenAI();
+
+    request.then((response) => {
+        initSpeedtestInterface(response.message);
+    });
+
     resetAll();
-    initSpeedtestInterface(query);
+    inputFocus();
 }
 
 start();
 
 function resetAll() {
+    closeModal();
     clearInterval(wpmInterval);
     container.innerHTML = "";
     time = 0;
     typeMiss = 0;
     isStarting = false;
-    document.querySelector('#accuracy').innerText = 100;
-    document.querySelector('#wpm').innerText = 0;
+    setWpm(0);
+    setAccuracy(100);
 }
 
 // Description: Call the OpenAi API to generate a function in the language of your choice
-// async function generateFunctionWithOpenAI() {
-//     const res = await fetch("http://localhost:3000/api/generate-function", {
-//         method: "POST",
-//         headers: {
-//             "Content-Type": "application/json"
-//         },
-//         body: JSON.stringify({
-//             nameLanguage: selectLanguage.value
-//         })
-//     });
+async function generateFunctionWithOpenAI() {
+    const res = await fetch("http://localhost:3000/api/generate-function", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            nameLanguage: selectLanguage.value
+        })
+    });
 
-//     const json = await res.json();
-//     return json;
-// }
-
-// const request = generateFunctionWithOpenAI();
-// request.then((response) => {
-//     console.log(response.message);
-//     initSpeedtestInterface(response.message);
-// });
-
+    const json = await res.json();
+    return json;
+}
 
 // Display text for the test
 function initSpeedtestInterface(text) {
@@ -138,49 +132,58 @@ function testArr(arr, indexes) {
 
 // Handles the keypresses
 input.addEventListener('input', function(e) {
-    const activeChar = container.querySelector('.char__active');
-    const nextChar = activeChar.nextElementSibling;
-
-    if (!isStarting) {
-        isStarting = true;
-        startTimer();
+    try {
+        const activeChar = container.querySelector('.char__active');
+        const nextChar = activeChar.nextElementSibling;
+    
+        if (!isStarting) {
+            isStarting = true;
+            startTimer();
+        }
+    
+        if (e.data === activeChar.innerText) {
+            goodAnswer(activeChar, nextChar);
+        } else {
+            typeMiss++;
+            activeChar.classList.add('char__bad');
+            activeChar.classList.add('char__miss');
+        }
+    
+        input.value = "";
+    
+        calculateAccuracy();
+    
+        if (nextChar === null) {
+            endTest();
+        }
+    } catch(e) {
+        console.log("No more characters to type");
     }
-
-    if (e.data === activeChar.innerText) {
-        goodAnswer(activeChar, nextChar);
-    } else {
-        typeMiss++;
-        activeChar.classList.add('char__bad');
-        activeChar.classList.add('char__miss');
-    }
-
-    input.value = "";
-
-    calculateAccuracy();
-
-    if (nextChar === null) {
-        endTest();
-    }
+    
 });
 
 input.addEventListener('keydown', function(e) {
-    const activeChar = container.querySelector('.char__active');
-    const nextChar = activeChar.nextElementSibling;
-
-    if (!isStarting) {
-        isStarting = true;
-        startTimer();
-    }
-
-    if (e.key === "Tab" || e.key === "Enter") {
-        e.preventDefault();
-    }
-
-    if (e.key === "Tab" && activeChar.classList.contains('char__tab')) {
-        e.preventDefault();
-        goodAnswer(activeChar, nextChar);
-    } else if (e.key === "Enter" && activeChar.classList.contains('char__enter')) {
-        goodAnswer(activeChar, nextChar);
+    try {
+        const activeChar = container.querySelector('.char__active');
+        const nextChar = activeChar.nextElementSibling;
+    
+        if (!isStarting) {
+            isStarting = true;
+            startTimer();
+        }
+    
+        if (e.key === "Tab" || e.key === "Enter") {
+            e.preventDefault();
+        }
+    
+        if (e.key === "Tab" && activeChar.classList.contains('char__tab')) {
+            e.preventDefault();
+            goodAnswer(activeChar, nextChar);
+        } else if (e.key === "Enter" && activeChar.classList.contains('char__enter')) {
+            goodAnswer(activeChar, nextChar);
+        }
+    } catch(e) {
+        console.log("No more characters to type");
     }
 });
 
@@ -198,8 +201,8 @@ function goodAnswer(activeChar, nextChar) {
 }
 
 function endTest() {
-    console.log("END")
     clearInterval(wpmInterval);
+    openModal();
 }
 
 // Calculate score
@@ -211,10 +214,39 @@ function startTimer() {
 function calculateWPM() {
     time += 1;
     const wpm = Math.round((container.querySelectorAll('.char__good').length / 5) / (time / 60));
-    document.querySelector('#wpm').innerText = wpm;
+
+    setWpm(wpm);
 }
 
 function calculateAccuracy() {
     const accuracy = (container.querySelectorAll('.char__miss').length / container.querySelectorAll('.char').length) * 100;
-    document.querySelector('#accuracy').innerText = 100 - accuracy.toFixed(1);
+
+    setAccuracy(accuracy);
 }
+
+function setWpm(wpm) {
+    document.querySelectorAll('.wpm').forEach((el) => {
+        el.innerText = wpm;
+    });
+}
+
+function setAccuracy(accuracy) {
+    document.querySelectorAll('.accuracy').forEach((el) => {
+        el.innerText = 100 - accuracy.toFixed(1);
+    });
+}
+
+// Modal
+function openModal() {
+  modal.style.display = "flex";
+}
+
+function closeModal() {
+    modal.style.display = "none";
+}
+
+window.addEventListener('click', function(e) {
+    if (e.target == modal) {
+        closeModal();
+    }
+});
